@@ -57,10 +57,8 @@ public class StatementPlanner {
         }
 
         Map<String, Database> dbs = AnalyzerUtils.collectAllDatabase(session, stmt);
+        // We have copied the table metadata, so needn't lock here.
         Map<String, Database> dbLocks = null;
-        if (lockDb) {
-            dbLocks = dbs;
-        }
         try {
             lock(dbLocks);
             try (PlannerProfile.ScopedTimer ignored = PlannerProfile.getScopedTimer("Analyzer")) {

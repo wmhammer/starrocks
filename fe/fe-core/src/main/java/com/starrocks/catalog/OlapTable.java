@@ -334,10 +334,6 @@ public class OlapTable extends Table {
         return indexes.getIndexes();
     }
 
-    public TableIndexes getTableIndexes() {
-        return indexes;
-    }
-
     public void checkAndSetName(String newName, boolean onlyCheck) throws DdlException {
         // check if rollup has same name
         for (String idxName : getIndexNameToId().keySet()) {
