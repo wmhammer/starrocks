@@ -73,7 +73,7 @@ public class DecimalV3FunctionAnalyzer {
             return Type.VARCHAR;
         }
 
-        if (FunctionSet.MAX_BY.equals(fnName)) {
+        if (FunctionSet.MAX_BY.equals(fnName) || FunctionSet.MIN_BY.equals(fnName)) {
             if (argTypes[0].isDecimalV3()) {
                 return ScalarType.createDecimalV3Type(argTypes[0].getPrimitiveType(),
                         argTypes[0].getPrecision(),

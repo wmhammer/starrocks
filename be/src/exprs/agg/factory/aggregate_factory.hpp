@@ -101,6 +101,9 @@ public:
     static auto MakeMinAggregateFunction();
 
     template <PrimitiveType PT>
+    static auto MakeMinByAggregateFunction();
+
+    template <PrimitiveType PT>
     static AggregateFunctionPtr MakeAnyValueAggregateFunction();
 
     template <typename NestedState, bool IsWindowFunc, bool IgnoreNull = true,
@@ -231,6 +234,12 @@ auto AggregateFactory::MakeMaxByAggregateFunction() {
 template <PrimitiveType PT>
 auto AggregateFactory::MakeMinAggregateFunction() {
     return std::make_shared<MaxMinAggregateFunction<PT, MinAggregateData<PT>, MinElement<PT, MinAggregateData<PT>>>>();
+}
+
+template <PrimitiveType PT>
+auto AggregateFactory::MakeMinByAggregateFunction() {
+    return std::make_shared<
+            MinByAggregateFunction<PT, MinByAggregateData<PT>, MinByElement<PT, MinByAggregateData<PT>>>>();
 }
 
 template <PrimitiveType PT>

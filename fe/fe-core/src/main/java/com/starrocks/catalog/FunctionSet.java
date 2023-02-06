@@ -211,6 +211,7 @@ public class FunctionSet {
     public static final String MAX = "max";
     public static final String MAX_BY = "max_by";
     public static final String MIN = "min";
+    public static final String MIN_BY = "min_by";
     public static final String PERCENTILE_APPROX = "percentile_approx";
     public static final String PERCENTILE_CONT = "percentile_cont";
     public static final String RETENTION = "retention";
@@ -787,6 +788,14 @@ public class FunctionSet {
                     continue;
                 }
                 addBuiltin(AggregateFunction.createBuiltin(MAX_BY, Lists.newArrayList(t1, t), t1, Type.VARCHAR, true, true, false));
+            }
+
+            // min_by
+            for (Type t1 : Type.getSupportedTypes()) {
+                if (t1.isFunctionType() || t1.isNull() || t1.isChar() || t1.isPseudoType()) {
+                    continue;
+                }
+                addBuiltin(AggregateFunction.createBuiltin(MIN_BY, Lists.newArrayList(t1, t), t1, Type.VARCHAR, true, true, false));
             }
 
             // NDV
