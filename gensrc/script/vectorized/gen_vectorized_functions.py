@@ -74,6 +74,7 @@ ${license}
 #include "exprs/vectorized/grouping_sets_functions.h"
 #include "exprs/vectorized/es_functions.h"
 #include "exprs/vectorized/utility_functions.h"
+#include "exprs/vectorized/first_day.h"
 
 namespace starrocks {
 namespace vectorized {

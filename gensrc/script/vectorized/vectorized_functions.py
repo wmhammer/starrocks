@@ -820,4 +820,7 @@ vectorized_functions = [
     [170000, 'map_size', 'INT', ['ANY_MAP'], 'MapFunctions::map_size'],
     [170001, 'map_keys', 'ANY_ARRAY', ['ANY_MAP'], 'MapFunctions::map_keys'],
     [170002, 'map_values', 'ANY_ARRAY', ['ANY_MAP'], 'MapFunctions::map_values'],
+
+    # first_day function
+    [100019, 'first_day', 'VARCHAR', ['VARCHAR', 'INT', 'INT'], "FirstDayFunction::first_day"],
 ]
