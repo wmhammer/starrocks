@@ -7,6 +7,11 @@
 #include "exprs/vectorized/function_helper.h"
 #include "exprs/vectorized/string_functions.h"
 #include "time.h"
+#include "time_functions.h"
+#include "runtime/time_types.h"
+#include "types/date_value.h"
+#include "runtime/datetime_value.h"
+#include "types/timestamp_value.h"
 
 using namespace std;
 
@@ -20,71 +25,48 @@ namespace starrocks::vectorized {
         DEFINE_VECTORIZED_FN(first_day);
     };
 
-    inline time_t stringToDatetime(string str)
-    {
-        if (str.length() == 10) {
-            str.append(" 00:00:00");
-        }
-
-        char *cha = (char*)str.data();             // 将string转换成char*。
-        tm tm_;                                    // 定义tm结构体。
-        int year, month, day, hour, minute, second;// 定义时间的各个int临时变量。
-        sscanf(cha, "%d-%d-%d %d:%d:%d", &year, &month, &day, &hour, &minute, &second);// 将string存储的日期时间，转换为int临时变量。
-        tm_.tm_year = year - 1900;                 // 年，由于tm结构体存储的是从1900年开始的时间，所以tm_year为int临时变量减去1900。
-        tm_.tm_mon = month - 1;                    // 月，由于tm结构体的月份存储范围为0-11，所以tm_mon为int临时变量减去1。
-        tm_.tm_mday = day;                         // 日。
-        tm_.tm_hour = hour;                        // 时。
-        tm_.tm_min = minute;                       // 分。
-        tm_.tm_sec = second;                       // 秒。
-        tm_.tm_isdst = 0;                          // 非夏令时。
-        time_t t_ = mktime(&tm_);               // 将tm结构体转换成time_t格式。
-        return t_;                                 // 返回值。
-    }
-
-    inline std::string call_internal(string date, int date_field, int first_day_of_week) {
+    inline std::string call_internal(string date, uint8_t date_field, uint8_t first_day_of_week) {
         if (date_field == 0) {
             return date;
         }
 
-        time_t curr_date =  stringToDatetime(date);
-        tm* curr_date_tm = localtime(&curr_date);
+        DateTimeValue current_date;
+        current_date.from_date_str(date.c_str(), date.size());
 
-        time_t result_date;
+        DateTimeValue result_date = current_date;
         switch (date_field) {
-            case 1:
-                result_date = curr_date;
-                break;
             case 2: {
                 if (first_day_of_week < 1 || first_day_of_week > 7) {
                     throw "一周的第一天的取值区间是[1,7]";
                 }
-                int day_of_week = curr_date_tm ->tm_wday;
+                int day_of_week = current_date.weekday() + 1;
                 if (first_day_of_week == day_of_week) {
                     return date;
                 }
 
+                TimeInterval interval;
                 if (first_day_of_week < day_of_week) {
-                    curr_date_tm->tm_mday += first_day_of_week - day_of_week ;
+                    interval.day = first_day_of_week - day_of_week;
                 }
                 else {
-                    curr_date_tm->tm_mday += first_day_of_week - day_of_week -7;
+                    interval.day = first_day_of_week - day_of_week - 7;
                 }
 
-                result_date = mktime(curr_date_tm);
+                result_date.date_add_interval(interval, starrocks::TimeUnit::DAY);
                 break;
             }
-            case 3:
-                curr_date_tm->tm_mday = 1;
-                result_date = mktime(curr_date_tm);
+            case 3: {
+                TimeInterval interval;
+                interval.day = current_date.day() - 1;
+                result_date.date_add_interval(interval, starrocks::TimeUnit::DAY);
                 break;
+            }
             default:
-                result_date = curr_date;
                 break;
         }
 
         char buf[11];
-        strftime(buf, sizeof(buf), "%Y-%m-%d", localtime(&result_date));
-
+        result_date.to_string(buf);
         return buf;
     }
 
@@ -92,10 +74,8 @@ namespace starrocks::vectorized {
                                                  const starrocks::vectorized::Columns& columns) {
         ColumnViewer<TYPE_VARCHAR> viewer(columns[0]);
 
-        RunTimeCppType<TYPE_INT> date_field_column = ColumnHelper::get_const_value<TYPE_INT>(columns[1]);
-        RunTimeCppType<TYPE_INT> first_day_week_column = ColumnHelper::get_const_value<TYPE_INT>(columns[2]);
-        int date_field = abs(date_field_column);
-        int first_day_of_week = abs(first_day_week_column);
+        uint8_t date_field = *columns[1]->raw_data();
+        uint8_t first_day_of_week = *columns[2]->raw_data();
 
         size_t size = columns[0]->size();
         ColumnBuilder<TYPE_VARCHAR> builder(size);
