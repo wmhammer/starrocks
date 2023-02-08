@@ -39,7 +39,7 @@ namespace starrocks::vectorized {
                 if (first_day_of_week < 1 || first_day_of_week > 7) {
                     throw "一周的第一天的取值区间是[1,7]";
                 }
-                int day_of_week = current_date.weekday() + 1;
+                uint8_t day_of_week = current_date.weekday() + 1;
                 if (first_day_of_week == day_of_week) {
                     return date;
                 }
