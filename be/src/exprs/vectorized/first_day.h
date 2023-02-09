@@ -72,6 +72,9 @@ namespace starrocks::vectorized {
 
     inline ColumnPtr FirstDayFunction::first_day(FunctionContext* context,
                                                  const starrocks::vectorized::Columns& columns) {
+        DCHECK_EQ(3, columns.size());
+        RETURN_IF_COLUMNS_ONLY_NULL(columns);
+
         ColumnViewer<TYPE_VARCHAR> viewer(columns[0]);
 
         uint8_t date_field = *columns[1]->raw_data();
