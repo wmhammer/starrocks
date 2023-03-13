@@ -33,6 +33,10 @@ void AggregateFuncResolver::register_others() {
     add_array_mapping<TYPE_ARRAY, TYPE_VARCHAR>("dict_merge");
     add_array_mapping<TYPE_ARRAY, TYPE_ARRAY>("retention");
 
+    // add retention_sequence
+    add_aggregate_mapping_variadic<TYPE_INT, TYPE_VARCHAR, RetentionSequenceState>(
+            "retention_sequence", false, AggregateFactory::MakeRetentionSequenceAggregateFunction());
+
     // sum, avg, distinct_sum use decimal128 as intermediate or result type to avoid overflow
     add_decimal_mapping<TYPE_DECIMAL32, TYPE_DECIMAL128>("decimal_multi_distinct_sum");
     add_decimal_mapping<TYPE_DECIMAL64, TYPE_DECIMAL128>("decimal_multi_distinct_sum");

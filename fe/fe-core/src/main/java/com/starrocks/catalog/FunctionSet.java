@@ -215,6 +215,7 @@ public class FunctionSet {
     public static final String PERCENTILE_APPROX = "percentile_approx";
     public static final String PERCENTILE_CONT = "percentile_cont";
     public static final String RETENTION = "retention";
+    public static final String RETENTION_SEQUENCE = "retention_sequence";
     public static final String STDDEV = "stddev";
     public static final String STDDEV_POP = "stddev_pop";
     public static final String STDDEV_SAMP = "stddev_samp";
@@ -932,6 +933,9 @@ public class FunctionSet {
 
         addBuiltin(AggregateFunction.createBuiltin(RETENTION, Lists.newArrayList(Type.ARRAY_BOOLEAN),
                 Type.ARRAY_BOOLEAN, Type.BIGINT, false, false, false));
+
+        addBuiltin(AggregateFunction.createBuiltin(RETENTION_SEQUENCE, Lists.newArrayList(Type.INT, Type.INT, Type.INT, Type.INT),
+                Type.VARCHAR, Type.VARCHAR, false, false, false));
 
         // PercentileCont
         addBuiltin(AggregateFunction.createBuiltin(FunctionSet.PERCENTILE_CONT,

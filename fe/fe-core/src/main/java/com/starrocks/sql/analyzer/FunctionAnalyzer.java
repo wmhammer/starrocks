@@ -184,6 +184,12 @@ public class FunctionAnalyzer {
             // For Array<BOOLEAN> that have different size, we just extend result array to Compatible with it
         }
 
+        if (fnName.getFunction().equals(FunctionSet.RETENTION_SEQUENCE)) {
+            if (functionCallExpr.getChildren().size() != 4) {
+                throw new SemanticException("retention_sequence only support 4 parameters");
+            }
+        }
+
         if (fnName.getFunction().equals(FunctionSet.WINDOW_FUNNEL)) {
             Expr modeArg = functionCallExpr.getChild(2);
             if (modeArg instanceof IntLiteral) {

@@ -31,6 +31,7 @@
 #include "exprs/agg/percentile_cont.h"
 #include "exprs/agg/percentile_union.h"
 #include "exprs/agg/retention.h"
+#include "exprs/agg/retention_sequence.h"
 #include "exprs/agg/sum.h"
 #include "exprs/agg/variance.h"
 #include "exprs/agg/window.h"
@@ -134,6 +135,8 @@ public:
 
     static AggregateFunctionPtr MakeDictMergeAggregateFunction();
     static AggregateFunctionPtr MakeRetentionAggregateFunction();
+    static AggregateFunctionPtr MakeRetentionSequenceAggregateFunction();
+
 
     // Hyperloglog functions:
     static AggregateFunctionPtr MakeHllUnionAggregateFunction();

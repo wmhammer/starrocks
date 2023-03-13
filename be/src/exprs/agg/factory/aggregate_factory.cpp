@@ -50,6 +50,10 @@ AggregateFunctionPtr AggregateFactory::MakeRetentionAggregateFunction() {
     return std::make_shared<RetentionAggregateFunction>();
 }
 
+AggregateFunctionPtr AggregateFactory::MakeRetentionSequenceAggregateFunction() {
+    return std::make_shared<RetentionSequenceAggregateFunction>();
+}
+
 AggregateFunctionPtr AggregateFactory::MakeHllUnionAggregateFunction() {
     return std::make_shared<HllUnionAggregateFunction>();
 }
