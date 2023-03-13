@@ -22,6 +22,8 @@
 #include "udf/udf_internal.h"
 #include "util/phmap/phmap_dump.h"
 #include "util/slice.h"
+#include "column/column_builder.h"
+#include "column/column_viewer.h"
 
 namespace starrocks::vectorized {
 
@@ -85,10 +87,15 @@ private:
 public:
     void update(FunctionContext* ctx, const Column** columns,
                 AggDataPtr __restrict state, size_t row_num) const override {
-        int event_arr = down_cast<const Int32Column *>(columns[0])->get_data()[row_num];
-        int time_diff = down_cast<const Int32Column *>(columns[1])->get_data()[row_num];
-        int time_window = down_cast<const Int32Column *>(columns[2])->get_data()[row_num];
-        int conversion_window = down_cast<const Int32Column *>(columns[3])->get_data()[row_num];
+        int event_arr = ColumnViewer<TYPE_INT>(columns[0]->clone_shared()).value(row_num);
+        int time_diff = ColumnViewer<TYPE_INT>(columns[1]->clone_shared()).value(row_num);;
+        int time_window = ColumnViewer<TYPE_INT>(columns[2]->clone_shared()).value(row_num);;
+        int conversion_window = ColumnViewer<TYPE_INT>(columns[3]->clone_shared()).value(row_num);;
+
+        // int event_arr = down_cast<const Int32Column *>(columns[0])->get_data()[row_num];
+        // int time_diff = down_cast<const Int32Column *>(columns[1])->get_data()[row_num];
+        // int time_window = down_cast<const Int32Column *>(columns[2])->get_data()[row_num];
+        // int conversion_window = down_cast<const Int32Column *>(columns[3])->get_data()[row_num];
 
         DCHECK_GT(time_window, 0);
         DCHECK_GT(conversion_window, 0);
